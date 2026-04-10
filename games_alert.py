@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
-# GitHub Secrets nundi data tisukuntundi
+# GitHub Secrets
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 FILE_NAME = "games_old.txt"
@@ -17,7 +17,6 @@ def get_driver():
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    options.page_load_strategy = 'eager'
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=options)
 
@@ -62,7 +61,7 @@ def scrap_psn(driver):
 
 def main():
     if not BOT_TOKEN or not CHAT_ID:
-        print("Error: Secrets are missing!")
+        print("Error: Secrets missing!")
         return
     
     driver = get_driver()
@@ -79,13 +78,13 @@ def main():
     if new_items:
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
         for item in reversed(new_items):
-            requests.post(url, data={"chat_id": CHAT_ID, "text": item, "parse_mode": "Markdown"}, verify=False)
+            requests.post(url, data={"chat_id": CHAT_ID, "text": item, "parse_mode": "Markdown"})
             time.sleep(1)
         
         with open(FILE_NAME, "w", encoding="utf-8") as f:
             f.write("\n".join([n.replace('\n', ' ') for n in all_news]))
     else:
-        print("No new deals found.")
+        print("No new deals.")
 
 if __name__ == "__main__":
     main()
